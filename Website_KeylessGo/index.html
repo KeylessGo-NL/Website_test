@@ -2,284 +2,706 @@
 <html lang="nl">
 <head>
     <meta charset="UTF-8" />
+    <title>KeylessGo – Altijd een auto in de buurt. Helemaal keyless.</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>KeylessGo – Altijd een auto in de buurt</title>
-
-    <!-- Google Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-
-    <!-- Eigen stylesheet -->
+    <meta name="description" content="KeylessGo biedt moderne deelauto’s en busjes met keyless toegang in de regio. Boek via SnappCar en stap direct in, zonder sleuteloverdracht.">
+    <!-- Laat je huidige styles.css gewoon staan -->
     <link rel="stylesheet" href="styles.css" />
+    <!-- Extra kleine mobile-fix laag (overrulet alleen wat nodig is) -->
+    <style>
+        @media (max-width: 900px) {
+            html {
+                font-size: 15px;
+            }
+            body {
+                line-height: 1.5;
+            }
+            .hero-title,
+            h1 {
+                font-size: 1.7rem !important;
+                line-height: 1.2 !important;
+            }
+            .hero-subtitle {
+                font-size: 0.95rem !important;
+                max-width: 32rem;
+            }
+            .hero-buttons {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .hero-buttons a {
+                width: 100%;
+                text-align: center;
+            }
+            .fleet-grid {
+                grid-template-columns: 1fr !important;
+            }
+        }
 
-    <!-- Leaflet CSS (kaart) -->
-    <link
-        rel="stylesheet"
-        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-        crossorigin=""
-    />
+        @media (max-width: 600px) {
+            html {
+                font-size: 14px;
+            }
+            .site-main {
+                padding-inline: 1rem;
+            }
+            .hero {
+                padding-inline: 1rem;
+                padding-block: 2rem;
+            }
+        }
+
+        /* fallback classes voor als ze nog niet in je css zitten */
+        .site-header {
+            position: sticky;
+            top: 0;
+            z-index: 20;
+            background: rgba(255, 255, 255, 0.94);
+            backdrop-filter: blur(10px);
+        }
+        .site-header-inner {
+            max-width: 1120px;
+            margin: 0 auto;
+            padding: 0.75rem 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+        .kg-logo-text {
+            font-family: inherit;
+            font-weight: 800;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            font-size: 1.1rem;
+        }
+        .kg-logo-text span:first-child { color: #1A2C49; }
+        .kg-logo-text span:last-child { color: #FF7A00; }
+
+        .main-nav {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: 0.9rem;
+        }
+        .main-nav a {
+            text-decoration: none;
+            padding: 0.35rem 0.7rem;
+            border-radius: 999px;
+            color: #111827;
+            white-space: nowrap;
+        }
+        .main-nav a:hover {
+            background: rgba(15, 23, 42, 0.06);
+        }
+        .main-nav a.nav-cta {
+            background: #FF7A00;
+            color: #111827;
+            font-weight: 600;
+        }
+
+        .nav-toggle {
+            display: none;
+        }
+
+        @media (max-width: 900px) {
+            .main-nav {
+                display: none;
+            }
+            .main-nav.open {
+                display: flex;
+                flex-direction: column;
+                align-items: flex-start;
+                position: absolute;
+                top: 56px;
+                right: 0;
+                left: 0;
+                background: #ffffff;
+                border-bottom: 1px solid #e5e7eb;
+                padding: 0.75rem 1.25rem 1rem;
+            }
+            .nav-toggle {
+                display: inline-flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                width: 32px;
+                height: 32px;
+                border-radius: 999px;
+                border: 1px solid #e5e7eb;
+                background: #ffffff;
+                cursor: pointer;
+            }
+            .nav-toggle span {
+                width: 18px;
+                height: 2px;
+                border-radius: 999px;
+                background: #111827;
+                margin: 2px 0;
+            }
+        }
+
+        .site-main {
+            max-width: 1120px;
+            margin: 0 auto;
+            padding: 1.75rem 1.25rem 3rem;
+        }
+
+        .hero {
+            position: relative;
+            display: grid;
+            grid-template-columns: minmax(0, 3fr) minmax(0, 2.5fr);
+            gap: 2rem;
+            align-items: center;
+            border-radius: 1.5rem;
+            overflow: hidden;
+            background: #1A2C49;
+            color: #ffffff;
+        }
+
+        .hero::before {
+            /* hier kun je je busje-foto instellen */
+            content: "";
+            position: absolute;
+            inset: 0;
+            background-image: url("img/fleet/van-bg.jpg");
+            background-size: cover;
+            background-position: center;
+            opacity: 0.25;
+        }
+
+        .hero-inner {
+            position: relative;
+            padding: 2.5rem 2.5rem;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.14em;
+            padding: 0.2rem 0.8rem;
+            border-radius: 999px;
+            background: rgba(15, 23, 42, 0.8);
+            border: 1px solid rgba(148, 163, 184, 0.8);
+        }
+
+        .hero-title {
+            margin: 0.75rem 0 0.4rem;
+            font-size: 2.2rem;
+            line-height: 1.15;
+        }
+
+        .hero-subtitle {
+            margin: 0 0 1rem;
+            font-size: 0.98rem;
+            max-width: 32rem;
+            color: #e5e7eb;
+        }
+
+        .hero-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .hero-buttons a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.7rem 1.2rem;
+            border-radius: 999px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: #FF7A00;
+            color: #111827;
+        }
+
+        .btn-outline-light {
+            border: 1px solid rgba(229, 231, 235, 0.9);
+            color: #ffffff;
+        }
+
+        .hero-rating {
+            font-size: 0.8rem;
+            color: #e5e7eb;
+            margin-top: 0.25rem;
+        }
+
+        .hero-side-card {
+            position: relative;
+            padding: 1.6rem 1.8rem;
+            background: rgba(15, 23, 42, 0.92);
+            border-radius: 1rem;
+            margin: 1.5rem;
+            border: 1px solid rgba(148, 163, 184, 0.8);
+            font-size: 0.85rem;
+        }
+
+        .hero-side-card h2 {
+            margin: 0 0 0.25rem;
+            font-size: 1.1rem;
+        }
+
+        .hero-side-card p {
+            margin: 0.15rem 0;
+            color: #d1d5db;
+        }
+
+        .hero-side-card small {
+            display: block;
+            margin-top: 0.75rem;
+            font-size: 0.75rem;
+            color: #9ca3af;
+        }
+
+        @media (max-width: 900px) {
+            .hero {
+                grid-template-columns: minmax(0, 1fr);
+            }
+            .hero-inner {
+                padding: 2rem 1.4rem 1.4rem;
+            }
+            .hero-side-card {
+                margin: 0 1.4rem 1.6rem;
+            }
+        }
+
+        .section {
+            margin-top: 2.3rem;
+        }
+
+        .section h2 {
+            margin: 0 0 0.4rem;
+            font-size: 1.4rem;
+            color: #111827;
+        }
+
+        .section p.section-intro {
+            margin: 0 0 1rem;
+            color: #6b7280;
+            font-size: 0.95rem;
+        }
+
+        .usp-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 1rem;
+        }
+
+        .usp-card {
+            background: #ffffff;
+            border-radius: 1rem;
+            padding: 1rem 1.1rem;
+            border: 1px solid #e5e7eb;
+            font-size: 0.92rem;
+        }
+
+        .usp-card h3 {
+            margin: 0 0 0.4rem;
+            font-size: 1rem;
+        }
+
+        @media (max-width: 900px) {
+            .usp-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .fleet-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 1rem;
+        }
+
+        .fleet-card {
+            background: #ffffff;
+            border-radius: 1rem;
+            border: 1px solid #e5e7eb;
+            overflow: hidden;
+            font-size: 0.9rem;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .fleet-card img {
+            width: 100%;
+            height: 130px;
+            object-fit: cover;
+        }
+
+        .fleet-card-body {
+            padding: 0.8rem 0.9rem 1rem;
+        }
+
+        .fleet-card h3 {
+            margin: 0 0 0.2rem;
+            font-size: 1rem;
+        }
+
+        .fleet-card p {
+            margin: 0 0 0.35rem;
+            color: #4b5563;
+        }
+
+        .fleet-card .price {
+            font-weight: 600;
+            color: #111827;
+            margin-top: 0.2rem;
+        }
+
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            font-size: 0.85rem;
+            margin: 0.75rem 0;
+        }
+        .legend-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+        .legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 999px;
+        }
+
+        .steps-list {
+            list-style: none;
+            padding-left: 0;
+            margin: 0.75rem 0 0;
+            font-size: 0.92rem;
+            color: #4b5563;
+        }
+        .steps-list li {
+            margin-bottom: 0.25rem;
+        }
+
+        .footer {
+            border-top: 1px solid #e5e7eb;
+            padding: 1.5rem 1.25rem 2rem;
+            font-size: 0.85rem;
+            color: #6b7280;
+        }
+        .footer-inner {
+            max-width: 1120px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 1.5rem;
+        }
+        .footer h4 {
+            margin: 0 0 0.4rem;
+            font-size: 0.95rem;
+            color: #111827;
+        }
+        .footer a {
+            display: block;
+            color: inherit;
+            text-decoration: none;
+            margin-bottom: 0.25rem;
+        }
+        .footer a:hover {
+            text-decoration: underline;
+        }
+        .footer-bottom {
+            max-width: 1120px;
+            margin: 0.75rem auto 0;
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        @media (max-width: 900px) {
+            .fleet-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+            .footer-inner {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .fleet-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 <body>
 
-    <!-- HEADER -->
-    <header>
-        <div class="container header-content">
-            <div class="logo">Keyless<span>Go</span></div>
+<header class="site-header">
+    <div class="site-header-inner">
+        <a href="index.html" class="kg-logo-text">
+            <span>Keyless</span><span>Go</span>
+        </a>
 
-            <div class="hamburger" id="hamburger">
-                <span class="bar"></span>
-                <span class="bar"></span>
-                <span class="bar"></span>
-            </div>
+        <button class="nav-toggle" aria-label="Menu openen">
+            <span></span><span></span><span></span>
+        </button>
 
-            <nav class="nav-menu" id="nav-menu">
-                <ul class="nav-links">
-                    <li><a href="#vloot">Vloot</a></li>
-                    <li><a href="#locaties">Locaties</a></li>
-                    <li><a href="vind-voertuig.html">Vind voertuig</a></li>
-                    <li><a href="#hoe-werkt-het">Hoe werkt het?</a></li>
-                    <li><a href="#contact">Contact</a></li>
-                </ul>
-                <a href="#" class="btn btn-primary nav-cta">Boek op SnappCar.nl</a>
-            </nav>
-        </div>
-    </header>
+        <nav class="main-nav">
+            <a href="auto-huren.html">Auto huren</a>
+            <a href="busje-huren.html">Busje huren</a>
+            <a href="vloot.html">Vloot</a>
+            <a href="locaties.html">Locaties</a>
+            <a href="vind-voertuig.html">Vind voertuig</a>
+            <a href="hoe-werkt-het.html">Hoe werkt het?</a>
+            <a href="contact.html">Contact</a>
+            <a href="https://www.snappcar.nl" class="nav-cta" target="_blank" rel="noopener">Boek op SnappCar.nl</a>
+        </nav>
+    </div>
+</header>
+
+<main class="site-main">
 
     <!-- HERO -->
     <section class="hero">
-        <div class="container hero-content">
-            <h1 style="color: #FFFFFF;">Altijd een auto in de buurt. Helemaal keyless.</h1>
-            <p class="hero-sub">
-                Geen sleutels, geen wachttijd. Start, rij en lever weer in – volledig via de app.
+        <div class="hero-inner">
+            <div class="hero-badge">
+                <span>Altijd een auto in de buurt</span>
+            </div>
+            <h1 class="hero-title">Altijd een auto in de buurt. Helemaal keyless.</h1>
+            <p class="hero-subtitle">
+                Geen sleutels, geen wachttijd. Start, rij en lever weer in – volledig via de app. 
+                Jij boekt via SnappCar, wij verzorgen de voertuigen, hotspots en keyless technologie.
             </p>
             <div class="hero-buttons">
-                <a href="vind-voertuig.html" class="btn btn-primary" style="background-color: #F98C00; color: #FFFFFF;">Vind een voertuig in de buurt</a>
-                <a href="#hoe-werkt-het" class="btn btn-secondary" style="background-color: #F98C00; color: #FFFFFF; border-color:#F98C00;">Hoe werkt het?</a>
+                <a href="vind-voertuig.html" class="btn-primary">Vind een voertuig in de buurt</a>
+                <a href="hoe-werkt-het.html" class="btn-outline-light">Hoe werkt het?</a>
             </div>
-            <div class="trust-badge">
-                <span>★★★★★</span>
-                <span>4.9/5 – 700+ ritten op SnappCar.nl</span>
+            <div class="hero-rating">
+                ★★★★★ 4,9/5 – 700+ ritten op SnappCar.nl
             </div>
+        </div>
+
+        <aside class="hero-side-card">
+            <h2>Keyless verhuisbus</h2>
+            <p>Vandaag • 09:00 – 21:00 • Regio Utrecht</p>
+            <p class="price">Indicatie: vanaf € 65 p/dag</p>
+            <small>Voorbeeldreservering. Boeking en verzekering lopen altijd via SnappCar.</small>
+        </aside>
+    </section>
+
+    <!-- USP’S -->
+    <section class="section">
+        <h2>Moeiteloos huren, premium ervaring</h2>
+        <p class="section-intro">
+            KeylessGo combineert een professionele vloot met de vertrouwde boekingsflow van SnappCar. 
+            Ideaal voor verhuizen, weekendjes weg of zakelijke ritten.
+        </p>
+        <div class="usp-grid">
+            <article class="usp-card">
+                <h3>App & Go</h3>
+                <p>Open, vergrendel en start je rit volledig via de app. Geen sleuteloverdracht nodig.</p>
+            </article>
+            <article class="usp-card">
+                <h3>Betrouwbare kwaliteit</h3>
+                <p>Jonge, goed onderhouden voertuigen die structureel worden gecontroleerd en gereinigd.</p>
+            </article>
+            <article class="usp-card">
+                <h3>Altijd dichtbij</h3>
+                <p>Hotspots in wijken met hoge vraag, goede bereikbaarheid en veel parkeermogelijkheden.</p>
+            </article>
         </div>
     </section>
 
-    <!-- USP BLOKKEN -->
-    <section class="usp-blocks">
-        <div class="container">
-            <h2>Moeiteloos huren, premium ervaring</h2>
-            <div class="usp-grid">
-                <div class="usp-item">
-                    <span class="usp-icon">📲</span>
-                    <h3>App & Go</h3>
-                    <p>Open, vergrendel en start je rit volledig via de app. Geen sleuteloverdracht nodig.</p>
+    <!-- VLOOT TEASER -->
+    <section class="section">
+        <h2>Onze vloot</h2>
+        <p class="section-intro">Kies het voertuig dat past bij jouw rit – van compacte stadsauto tot ruime bestelbus.</p>
+
+        <div class="fleet-grid">
+            <article class="fleet-card">
+                <img src="img/fleet/compact-city.jpg" alt="Compacte stadsauto">
+                <div class="fleet-card-body">
+                    <h3>Compact City</h3>
+                    <p>Wendbaar, zuinig en ideaal voor dagelijkse ritten in en rond de stad.</p>
+                    <div class="price">Vanaf € 35 p/d</div>
                 </div>
-                <div class="usp-item">
-                    <span class="usp-icon">✨</span>
-                    <h3>Betrouwbare kwaliteit</h3>
-                    <p>Voertuigen worden structureel onderhouden en professioneel gereinigd.</p>
+            </article>
+            <article class="fleet-card">
+                <img src="img/fleet/comfort-suv.jpg" alt="SUV / Crossover">
+                <div class="fleet-card-body">
+                    <h3>Comfort SUV</h3>
+                    <p>Extra ruimte en comfort voor gezin, weekendtrip of business.</p>
+                    <div class="price">Vanaf € 55 p/d</div>
                 </div>
-                <div class="usp-item">
-                    <span class="usp-icon">📍</span>
-                    <h3>Altijd dichtbij</h3>
-                    <p>Hotspots in de beste wijken voor bereikbaarheid, veiligheid en vraag.</p>
+            </article>
+            <article class="fleet-card">
+                <img src="img/fleet/cargo-van.jpg" alt="Bestelbus">
+                <div class="fleet-card-body">
+                    <h3>Cargo Van</h3>
+                    <p>Perfect voor verhuizen, klussen en grotere ladingen.</p>
+                    <div class="price">Vanaf € 65 p/d</div>
                 </div>
-            </div>
+            </article>
+            <article class="fleet-card">
+                <img src="img/fleet/business-premium.jpg" alt="Premium sedan">
+                <div class="fleet-card-body">
+                    <h3>Business Premium</h3>
+                    <p>Maximaal comfort en uitstraling voor zakelijke afspraken.</p>
+                    <div class="price">Vanaf € 75 p/d</div>
+                </div>
+            </article>
         </div>
     </section>
 
-    <!-- VLOOT OVERZICHT -->
-    <section id="vloot" class="fleet-section">
-        <div class="container">
-            <h2>Onze vloot</h2>
-            <p class="section-sub">
-                Kies het voertuig dat past bij jouw rit – van compacte stadsauto tot ruime bestelbus.
+    <!-- LIVE LOCATIES & BESCHIKBAARHEID -->
+    <section class="section">
+        <h2>Live locaties & beschikbaarheid</h2>
+        <p class="section-intro">
+            Bekijk onze huidige hotspots en geplande voertuigen. Voor direct zoeken en boeken verwijzen we naar de pagina 
+            <strong>“Vind voertuig”</strong>.
+        </p>
+
+        <div class="legend">
+            <div class="legend-item">
+                <span class="legend-dot" style="background:#2563eb;"></span>
+                <span>Beschikbaar / gepland voertuig</span>
+            </div>
+            <div class="legend-item">
+                <span class="legend-dot" style="background:#f97316;"></span>
+                <span>Hotspot / high-demand locatie</span>
+            </div>
+        </div>
+
+        <p style="font-size:0.9rem; color:#4b5563;">
+            Hieronder zie je een voorvertoning van onze geplande hotspots. 
+            De interactieve kaart volgt op onze aparte <a href="locaties.html" style="text-decoration:underline;">Locaties-pagina</a>.
+        </p>
+
+        <div style="margin-top:1rem; padding:1rem; border:1px solid #e5e7eb; border-radius:1rem; background:#f8fafc;">
+            <p style="margin:0; font-size:0.9rem; color:#6b7280;">
+                <em>Kaartmodule wordt geladen… (nog niet geactiveerd op deze pagina)</em>
             </p>
-
-            <div class="fleet-grid">
-                <div class="fleet-card">
-                    <img src="img/fleet/compact.jpg" alt="Compacte stadsauto" />
-                    <div class="fleet-card-body">
-                        <h3>Compact City</h3>
-                        <p>Wendbaar, zuinig en ideaal voor dagelijkse ritten in en rond de stad.</p>
-                        <p class="fleet-price">Vanaf €35 p/d</p>
-                    </div>
-                </div>
-
-                <div class="fleet-card">
-                    <img src="img/fleet/suv.jpg" alt="SUV / Crossover" />
-                    <div class="fleet-card-body">
-                        <h3>Comfort SUV</h3>
-                        <p>Extra ruimte en comfort voor gezin, weekendtrip of business.</p>
-                        <p class="fleet-price">Vanaf €55 p/d</p>
-                    </div>
-                </div>
-
-                <div class="fleet-card">
-                    <img src="img/fleet/van.jpg" alt="Bestelbus" />
-                    <div class="fleet-card-body">
-                        <h3>Cargo Van</h3>
-                        <p>Perfect voor verhuizen, klussen en grotere ladingen.</p>
-                        <p class="fleet-price">Vanaf €65 p/d</p>
-                    </div>
-                </div>
-
-                <div class="fleet-card">
-                    <img src="img/fleet/premium.jpg" alt="Premium sedan" />
-                    <div class="fleet-card-body">
-                        <h3>Business Premium</h3>
-                        <p>Maximaal comfort en uitstraling voor zakelijke afspraken.</p>
-                        <p class="fleet-price">Vanaf €75 p/d</p>
-                    </div>
-                </div>
-            </div>
+            <!-- 
+                Opmerking:
+                Jouw map werkt straks zodra map.js + Leaflet initialisatie is toegevoegd.
+                Voor nu tonen we hier alleen een placeholder, zodat de layout klopt.
+            -->
         </div>
     </section>
 
-    <!-- LIVE KAART -->
-    <section id="locaties" class="map-section">
-        <div class="container">
-            <h2>Live locaties & beschikbaarheid</h2>
-            <p class="section-sub">
-                Bekijk onze huidige hotspots en geplande voertuigen. Voor directe boeking kun je naar de pagina “Vind voertuig”.
-            </p>
+    <!-- HOE HET WERKT (PREVIEW) -->
+    <section class="section">
+        <h2>Hoe werkt het?</h2>
+        <p class="section-intro">
+            Huren bij KeylessGo is eenvoudig en volledig digitaal. Je gebruikt de vertrouwde SnappCar-app 
+            om je rit te boeken, betalen, openen en afronden.
+        </p>
 
-            <div class="map-filters">
-                <input
-                    type="text"
-                    id="searchInput"
-                    class="search-input"
-                    placeholder="Zoek op stad, postcode of naam..."
-                />
+        <ul class="steps-list">
+            <li>1. Kies een voertuig op een van onze KeylessGo-hotspots.</li>
+            <li>2. Boek je rit via SnappCar – verzekerd en veilig.</li>
+            <li>3. Open het voertuig met de app, zonder sleuteloverdracht.</li>
+            <li>4. Start je rit en breng het voertuig terug op dezelfde locatie.</li>
+            <li>5. Sluit je rit af in de app, en je bent klaar.</li>
+        </ul>
 
-                <label for="typeFilter" class="visually-hidden">Voertuigtype filter</label>
-                <select id="typeFilter" class="type-select" aria-label="Voertuigtype filter">
-                    <option value="">Alle voertuigtypes</option>
-                    <option value="compact">Compact</option>
-                    <option value="suv">SUV</option>
-                    <option value="van">Bestelbus</option>
-                    <option value="ev">Elektrisch</option>
-                    <option value="premium">Premium</option>
-                </select>
-
-                <button id="resetFilters" class="btn btn-secondary map-reset-btn">
-                    Reset filters
-                </button>
-            </div>
-
-            <div id="liveMap" class="map-wrapper"></div>
-
-            <div class="map-legend">
-                <div class="legend-item">
-                    <span style="font-size:16px;">📌</span>
-                    <span>Beschikbaar / gepland voertuig</span>
-                </div>
-                <div class="legend-item">
-                    <span style="font-size:16px;">🔥</span>
-                    <span>Hotspot / high-demand locatie</span>
-                </div>
-            </div>
+        <div class="hero-buttons" style="margin-top:1rem;">
+            <a href="hoe-werkt-het.html" class="btn-outline-light" style="background:#1A2C49; border:1px solid #e5e7eb;">
+                Meer uitleg over keyless huren
+            </a>
         </div>
     </section>
 
-    <!-- PARTNER / HOE WERKT HET -->
-    <section id="hoe-werkt-het" class="partner-why">
-        <div class="container partner-wrapper">
-            <div class="partner-text">
-                <h2>Hoe werkt het?</h2>
-                <p>
-                    Jij boekt via het vertrouwde deelplatform, wij regelen de rest: een premium vloot,
-                    keyless technologie en volledige ondersteuning tijdens je rit.
-                </p>
-                <ul class="check-list">
-                    <li>Boek en verifieer jezelf op SnappCar.nl</li>
-                    <li>Open de auto met de app – geen sleutel nodig</li>
-                    <li>Rijden, tanken/opladen en weer terugzetten op de hotspot</li>
-                    <li>Foto’s uploaden, afsluiten via de app en je bent klaar</li>
-                </ul>
-                <a href="vind-voertuig.html" class="btn btn-primary">Zoek nu een voertuig</a>
-            </div>
-            <div class="partner-img">
-                <img src="img/ui/partner-logo.jpg" alt="Partner logo" class="partner-logo-img" />
-            </div>
+    <!-- SNAPPCAR PARTNERSHIP EXPLAINER -->
+    <section class="section">
+        <h2>KeylessGo × SnappCar</h2>
+        <p class="section-intro">
+            KeylessGo levert de voertuigen, hotspots en dagelijkse operatie.  
+            SnappCar verzorgt de boekingen, identiteitscontrole, betalingen en verzekering.
+        </p>
+
+        <div class="usp-grid">
+            <article class="usp-card">
+                <h3>Veilige verificatie</h3>
+                <p>SnappCar verifieert rijbewijs en identiteit. Alleen echte, gecontroleerde huurders.</p>
+            </article>
+            <article class="usp-card">
+                <h3>Verzekerde ritten</h3>
+                <p>Alle ritten zijn automatisch verzekerd via Allianz / SnappCar.</p>
+            </article>
+            <article class="usp-card">
+                <h3>Professioneel vlootbeheer</h3>
+                <p>KeylessGo zorgt voor onderhoud, hotspot-selectie en keyless technologie.</p>
+            </article>
         </div>
     </section>
 
-    <!-- FOOTER -->
-    <footer id="contact">
-        <div class="container footer-grid">
-            <div class="footer-col">
-                <h3 class="footer-logo">KeylessGo</h3>
-                <p class="footer-text">
-                    De nieuwe standaard in flexibele, keyless mobiliteit.
-                </p>
-            </div>
+    <!-- CTA SECTION -->
+    <section class="section" style="text-align:center; background:#1A2C49; color:#ffffff; border-radius:1.5rem;">
+        <h2 style="color:#ffffff;">Klaar om je eerste rit te maken?</h2>
+        <p style="max-width:32rem; margin:0 auto 1rem; color:#f3f4f6;">
+            Vind direct een voertuig in jouw buurt of bekijk hoe het werkt.
+        </p>
 
-            <div class="footer-col">
-                <h4>Menu</h4>
-                <ul>
-                    <li><a href="#vloot">Vloot</a></li>
-                    <li><a href="#locaties">Locaties</a></li>
-                    <li><a href="vind-voertuig.html">Vind voertuig</a></li>
-                    <li><a href="#hoe-werkt-het">Hoe werkt het?</a></li>
-                </ul>
-            </div>
+        <div class="hero-buttons" style="justify-content:center;">
+            <a href="vind-voertuig.html" class="btn-primary" style="font-size:1rem;">Vind voertuig</a>
+            <a href="hoe-werkt-het.html" class="btn-outline-light" style="font-size:1rem;">Hoe werkt het?</a>
+        </div>
+    </section>
 
-            <div class="footer-col">
-                <h4>Contact</h4>
-                <ul>
-                    <li><a href="mailto:info@keylessgo.nl">info@keylessgo.nl</a></li>
-                    <li><a href="#">Veelgestelde vragen</a></li>
-                    <li><a href="#">Voorwaarden & privacy</a></li>
-                </ul>
+</main>
+
+<!-- FOOTER -->
+<footer class="footer">
+    <div class="footer-inner">
+        <div>
+            <div class="kg-logo-text">
+                <span>Keyless</span><span>Go</span>
             </div>
+            <p style="margin-top:0.4rem;">Moderne deelauto's en busjes met keyless toegang.  
+                Vlootbeheer door KeylessGo, boekingen via SnappCar.</p>
         </div>
 
-        <div class="copyright">
-            &copy; <span id="year"></span> KeylessGo. Alle rechten voorbehouden.
+        <div>
+            <h4>Menu</h4>
+            <a href="auto-huren.html">Auto huren</a>
+            <a href="busje-huren.html">Busje huren</a>
+            <a href="vloot.html">Vloot</a>
+            <a href="locaties.html">Locaties</a>
+            <a href="hoe-werkt-het.html">Hoe werkt het?</a>
         </div>
-    </footer>
 
-    <!-- Leaflet JS -->
-    <script
-        src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-        crossorigin=""
-    ></script>
+        <div>
+            <h4>Contact</h4>
+            <a href="contact.html">Contactformulier</a>
+            <a href="mailto:info@keylessgo.nl">info@keylessgo.nl</a>
+            <a href="#">Privacy & cookies</a>
+        </div>
+    </div>
 
-    <!-- Kaart- en vlootlogica -->
-    <script src="fleet.js"></script>
+    <div class="footer-bottom">
+        <span>© <span id="year"></span> KeylessGo. Alle rechten voorbehouden.</span>
+        <span>Boekingen, verificatie en verzekering verlopen via SnappCar.</span>
+    </div>
+</footer>
 
-    <!-- Kleine UI scripts (hamburger + jaar) -->
-    <script>
-        const hamburger = document.getElementById('hamburger');
-        const navMenu = document.getElementById('nav-menu');
+<script>
+document.getElementById("year").textContent = new Date().getFullYear();
 
-        hamburger.addEventListener('click', () => {
-            navMenu.classList.toggle('active');
-            const bars = document.querySelectorAll('.bar');
-            if (navMenu.classList.contains('active')) {
-                bars[0].style.transform = "rotate(45deg) translate(5px, 5px)";
-                bars[1].style.opacity = "0";
-                bars[2].style.transform = "rotate(-45deg) translate(5px, -5px)";
-            } else {
-                bars[0].style.transform = "none";
-                bars[1].style.opacity = "1";
-                bars[2].style.transform = "none";
-            }
-        });
+// mobiel menu toggle
+const navToggle = document.querySelector(".nav-toggle");
+const nav = document.querySelector(".main-nav");
 
-        document.querySelectorAll('.nav-links a').forEach(link => {
-            link.addEventListener('click', () => {
-                navMenu.classList.remove('active');
-                const bars = document.querySelectorAll('.bar');
-                bars[0].style.transform = "none";
-                bars[1].style.opacity = "1";
-                bars[2].style.transform = "none";
-            });
-        });
+navToggle.addEventListener("click", () => {
+    nav.classList.toggle("open");
+});
+</script>
 
-        // Dynamisch jaar in footer
-        document.getElementById('year').textContent = new Date().getFullYear();
-    </script>
 </body>
-</html>
+</html> 
+
+
