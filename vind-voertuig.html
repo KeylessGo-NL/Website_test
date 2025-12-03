@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vind een voertuig in de buurt – KeylessGo</title>
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+    <!-- Eigen stylesheet -->
+    <link rel="stylesheet" href="styles.css" />
+
+    <!-- Leaflet CSS (kaart) -->
+    <link
+        rel="stylesheet"
+        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+        crossorigin=""
+    />
+</head>
+<body>
+
+    <!-- HEADER -->
+    <header>
+        <div class="container header-content">
+            <div class="logo">Keyless<span>Go</span></div>
+
+            <div class="hamburger" id="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+
+            <nav class="nav-menu" id="nav-menu">
+                <ul class="nav-links">
+                    <li><a href="index.html#vloot">Vloot</a></li>
+                    <li><a href="index.html#locaties">Locaties</a></li>
+                    <li><a href="vind-voertuig.html">Vind voertuig</a></li>
+                    <li><a href="index.html#hoe-werkt-het">Hoe werkt het?</a></li>
+                    <li><a href="index.html#contact">Contact</a></li>
+                </ul>
+                <a href="#" class="btn btn-primary nav-cta">Boek op SnappCar.nl</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- SUB HERO / INTRO -->
+    <section class="vehicle-page-hero">
+        <div class="container vehicle-page-hero-content">
+            <div class="vehicle-hero-text">
+                <h1>Vind direct een keyless auto in jouw buurt</h1>
+                <p class="hero-sub">
+                    Vul je voorkeuren in, bekijk de kaart en boek meteen via SnappCar. 
+                    Volledig keyless, 24/7, zonder sleuteloverdracht.
+                </p>
+                <div class="hero-badge-row">
+                    <div class="hero-badge">
+                        <span>★★★★★</span>
+                        <span>4.9/5 – 700+ ritten op SnappCar</span>
+                    </div>
+                    <div class="hero-badge hero-badge-outline">
+                        <span>⏱</span>
+                        <span>Boeken in 2 minuten geregeld</span>
+                    </div>
+                </div>
+            </div>
+            <div class="vehicle-hero-highlight">
+                <h3>Direct starten</h3>
+                <ul class="check-list compact-checklist">
+                    <li>Zoek op stad, postcode of buurt</li>
+                    <li>Kies het juiste voertuigtype</li>
+                    <li>Bekijk hotspots en dekking op de kaart</li>
+                    <li>Boek en open de auto via de app</li>
+                </ul>
+                <a href="#zoek-voertuig" class="btn btn-primary btn-full">Start met zoeken</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- KAART + FILTERS + RESULTATEN -->
+    <section id="zoek-voertuig" class="map-section">
+        <div class="container">
+            <h2>Zoek een voertuig in de buurt</h2>
+            <p class="section-sub">
+                Filter op locatie, type voertuig en favoriete hotspot. Klik op een marker om direct te boeken.
+            </p>
+
+            <div class="vehicle-layout">
+                <!-- Linkerzijde: filters + kaart -->
+                <div class="vehicle-main">
+                    <div class="map-filters">
+                        <input
+                            type="text"
+                            id="vehicleSearch"
+                            class="search-input"
+                            placeholder="Zoek op stad, postcode, buurt of hotspot..."
+                        />
+
+                        <label for="vehicleTypeFilter">Voertuigtype</label>
+                        <select id="vehicleTypeFilter" class="type-select">
+                            <option value="">Alle voertuigtypes</option>
+                            <option value="compact">Compact</option>
+                            <option value="suv">SUV / Crossover</option>
+                            <option value="van">Bestelbus</option>
+                            <option value="ev">Elektrisch</option>
+                            <option value="premium">Premium</option>
+                        </select>
+
+                        <button id="resetVehicleFilters" class="btn btn-secondary map-reset-btn">
+                            Reset filters
+                        </button>
+                    </div>
+
+                    <div id="vehicleMap" class="map-wrapper"></div>
+
+                    <div class="map-legend">
+                        <div class="legend-item">
+                            <span style="font-size:16px;">📌</span>
+                            <span>Beschikbaar voertuig</span>
+                        </div>
+                        <div class="legend-item">
+                            <span style="font-size:16px;">🔥</span>
+                            <span>Hotspot / high-demand locatie</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Rechterzijde: resultaten -->
+                <aside class="vehicle-sidebar">
+                    <h3>Beschikbare voertuigen (demo)</h3>
+                    <p class="vehicle-sidebar-sub">
+                        Klik op een voertuig om de locatie op de kaart te openen.
+                    </p>
+                    <div id="vehicleList" class="vehicle-list">
+                        <!-- Wordt dynamisch gevuld door find-vehicle.js -->
+                    </div>
+                </aside>
+            </div>
+        </div>
+    </section>
+
+    <!-- HOW-IT-WORKS BLOKKEN (INTERNE LINKS) -->
+    <section class="how-it-works-section">
+        <div class="container">
+            <h2>Zo werkt het – van zoeken tot wegrijden</h2>
+            <p class="section-sub">
+                Alles draait om gemak: snel boeken, keyless openen en weer zorgeloos terugbrengen op de hotspot.
+            </p>
+
+            <div class="how-grid">
+                <a href="#stap-1" class="how-card">
+                    <span class="how-icon">🔍</span>
+                    <h3>1. Vind jouw ideale voertuig</h3>
+                    <p>Filter op type, locatie en hotspot. Bekijk meteen of er een auto in jouw straat of wijk staat.</p>
+                    <span class="how-link">Ga naar stap 1</span>
+                </a>
+
+                <a href="#stap-2" class="how-card">
+                    <span class="how-icon">📲</span>
+                    <h3>2. Boek en verifieer in de app</h3>
+                    <p>De boeking loopt via SnappCar. Eenmalig verifiëren en je bent klaar voor al je volgende ritten.</p>
+                    <span class="how-link">Ga naar stap 2</span>
+                </a>
+
+                <a href="#stap-3" class="how-card">
+                    <span class="how-icon">🚗</span>
+                    <h3>3. Keyless starten en rijden</h3>
+                    <p>Open, start en sluit de auto volledig met je telefoon. 24/7, zonder sleuteloverdracht.</p>
+                    <span class="how-link">Ga naar stap 3</span>
+                </a>
+            </div>
+
+            <div class="how-steps" id="stap-1">
+                <div class="how-step">
+                    <h3>Stap 1 – Vind een voertuig op de kaart</h3>
+                    <p>
+                        Gebruik de kaart en filters om een voertuig te vinden dat past bij jouw rit:
+                        compact voor de stad, een bus voor verhuizingen of een premium auto voor een zakelijke afspraak.
+                    </p>
+                </div>
+
+                <div class="how-step" id="stap-2">
+                    <h3>Stap 2 – Boek via SnappCar</h3>
+                    <p>
+                        Klik op <strong>“Nu boeken”</strong> in de popup of in de lijst. Je wordt naar de SnappCar-pagina geleid
+                        met alle details, inclusief prijs, voorwaarden en beoordelingen van andere huurders.
+                    </p>
+                </div>
+
+                <div class="how-step" id="stap-3">
+                    <h3>Stap 3 – Keyless openen, rijden en terugbrengen</h3>
+                    <p>
+                        Op de dag van je boeking open je de auto met de app. Volg de stappen voor de check-in, maak foto's, 
+                        start je rit en lever de auto weer in op dezelfde hotspot. Alles wordt digitaal afgehandeld.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer id="contact">
+        <div class="container footer-grid">
+            <div class="footer-col">
+                <h3 class="footer-logo">KeylessGo</h3>
+                <p class="footer-text">
+                    De nieuwe standaard in flexibele, keyless mobiliteit.
+                </p>
+            </div>
+
+            <div class="footer-col">
+                <h4>Menu</h4>
+                <ul>
+                    <li><a href="index.html#vloot">Vloot</a></li>
+                    <li><a href="vind-voertuig.html">Vind voertuig</a></li>
+                    <li><a href="index.html#hoe-werkt-het">Hoe werkt het?</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <h4>Contact</h4>
+                <ul>
+                    <li><a href="mailto:info@keylessgo.nl">info@keylessgo.nl</a></li>
+                    <li><a href="#">Veelgestelde vragen</a></li>
+                    <li><a href="#">Voorwaarden &amp; privacy</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="copyright">
+            &copy; <span id="year"></span> KeylessGo. Alle rechten voorbehouden.
+        </div>
+    </footer>
+
+    <!-- Leaflet JS -->
+    <script
+        src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+        crossorigin=""
+    ></script>
+
+    <!-- Vind voertuig logica -->
+    <script src="find-vehicle.js"></script>
+
+    <!-- Kleine UI scripts (hamburger + jaar) -->
+    <script>
+        const hamburger = document.getElementById('hamburger');
+        const navMenu = document.getElementById('nav-menu');
+
+        hamburger.addEventListener('click', () => {
+            navMenu.classList.toggle('active');
+            const bars = document.querySelectorAll('.bar');
+            if (navMenu.classList.contains('active')) {
+                bars[0].style.transform = "rotate(45deg) translate(5px, 5px)";
+                bars[1].style.opacity = "0";
+                bars[2].style.transform = "rotate(-45deg) translate(5px, -5px)";
+            } else {
+                bars[0].style.transform = "none";
+                bars[1].style.opacity = "1";
+                bars[2].style.transform = "none";
+            }
+        });
+
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', () => {
+                navMenu.classList.remove('active');
+                const bars = document.querySelectorAll('.bar');
+                bars[0].style.transform = "none";
+                bars[1].style.opacity = "1";
+                bars[2].style.transform = "none";
+            });
+        });
+
+        // Dynamisch jaar in footer
+        document.getElementById('year').textContent = new Date().getFullYear();
+    </script>
+</body>
+</html>
